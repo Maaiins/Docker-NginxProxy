@@ -156,6 +156,12 @@ server {
 	ssl_dhparam {{ printf "/etc/nginx/certs/%s.dhparam.pem" $cert }};
 	{{ end }}
 
+	{{ if (and (exists (printf "/etc/nginx/certs/%s.ca.crt" $cert)) (exists (printf "/etc/nginx/certs/%s.ca.crl" $cert))) }}
+    ssl_client_certificate {{ printf "/etc/nginx/certs/%s.ca.crt" $cert }};
+    ssl_crl {{ printf "/etc/nginx/certs/%s.ca.crl" $cert }};
+    ssl_verify_client on;
+    {{ end }}
+
 	{{ if (ne $https_method "noredirect") }}
 	add_header Strict-Transport-Security "max-age=31536000";
 	{{ end }}
